@@ -1,6 +1,26 @@
+import axios from "axios";
 import React from "react";
 
 const Login = () => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const handleSubmit = async (e) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:7777/login",
+        {
+          email: email,
+          password: password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
   return (
     <div>
       <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -23,6 +43,8 @@ const Login = () => {
               </label>
               <div class="mt-2">
                 <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   type="email"
                   name="email"
                   id="email"
@@ -52,6 +74,8 @@ const Login = () => {
               </div>
               <div class="mt-2">
                 <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                   type="password"
                   name="password"
                   id="password"
@@ -64,6 +88,8 @@ const Login = () => {
 
             <div>
               <button
+                onClick={handleSubmit}
+                disabled={!email || !password}
                 type="submit"
                 class="flex w-full justify-center rounded-md bg-pink-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-pink-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
