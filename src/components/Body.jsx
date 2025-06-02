@@ -5,9 +5,8 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 const Body = () => {
   return (
-    <div className="flex">
-      <UserInfo />
-      <ProfileData />
+    <div className="">
+      <Outlet />
     </div>
   );
 };
