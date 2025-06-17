@@ -1,6 +1,6 @@
 import axios from "axios";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../appStore/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
@@ -10,6 +10,14 @@ const Login = () => {
   const [password, setPassword] = React.useState("Dilip@123");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+
+  const isLoggedIn = user.isLoggedIn;
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +34,7 @@ const Login = () => {
       console.error("Login failed:", error);
     }
   };
+
   return (
     <div>
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
