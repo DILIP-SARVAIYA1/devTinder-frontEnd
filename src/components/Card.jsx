@@ -11,7 +11,7 @@ const Card = ({
   skills = [],
 }) => {
   return (
-    <div className="relative w-80 h-[450px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end transition-transform duration-300 hover:scale-105 select-none">
+    <div className="relative w-80 h-[450px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end transition-transform duration-300 hover:scale-105 select-none focus:outline-none">
       {/* Full background image behind all content */}
       <img
         className="absolute inset-0 w-full h-full object-cover z-0"

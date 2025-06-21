@@ -2,7 +2,7 @@ import React from "react";
 
 const UserInfo = () => {
   return (
-    <div className="w-1/3">
+    <div className="flex-1/4">
       <div>
         <div className="navbar shadow-sm py-5 bg-gradient-to-tr from-pink-600  to-yellow-700">
           <div className="flex gap-2">

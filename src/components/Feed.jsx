@@ -23,7 +23,7 @@ const Feed = () => {
     fetchFeed();
   }, []);
 
-  // Fix: Use functional update to avoid stale state
+  // Handle drag events for swipe
   const handleDragStart = (e) => {
     setDrag((prev) => ({
       ...prev,
@@ -54,67 +54,112 @@ const Feed = () => {
   };
 
   if (!feedData.length)
-    return <div className="text-center mt-10">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center w-3/4 min-h-[500px] h-[500px] mx-auto">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mb-4"></div>
+        <div className="text-lg text-gray-500">Loading profiles...</div>
+      </div>
+    );
 
   if (current >= feedData.length)
-    return <div className="text-center mt-10">No more profiles!</div>;
+    return (
+      <div className="flex flex-col items-center justify-center w-3/4 min-h-[500px] h-[500px] mx-auto">
+        <div className="text-2xl font-semibold text-gray-600 mb-2">
+          No more profiles!
+        </div>
+        <div className="text-gray-400">Check back later for more matches.</div>
+      </div>
+    );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-white">
-      <div className="relative w-80 h-[450px]">
-        {feedData
-          .slice(current, current + 2)
-          .reverse()
-          .map((item, idx) => {
-            const isTop = idx === 0;
-            return (
-              <div
-                key={item._id}
-                ref={isTop ? cardRef : null}
-                className={`absolute w-full h-full transition-transform duration-300 ${
-                  isTop && drag.isDragging ? "z-20" : "z-10"
-                }`}
-                style={
-                  isTop
-                    ? {
-                        transform: `translate(${drag.x}px, ${
-                          drag.y
-                        }px) rotate(${drag.x / 15}deg)`,
-                        touchAction: "none",
-                        cursor: drag.isDragging ? "grabbing" : "grab",
-                      }
-                    : {
-                        transform: "scale(0.95) translateY(10px)",
-                        filter: "blur(1px)",
-                        zIndex: 0,
-                      }
-                }
-                onMouseDown={isTop ? handleDragStart : undefined}
-                onMouseMove={isTop && drag.isDragging ? handleDrag : undefined}
-                onMouseUp={isTop ? handleDragEnd : undefined}
-                onMouseLeave={
-                  isTop && drag.isDragging ? handleDragEnd : undefined
-                }
-                onTouchStart={isTop ? handleDragStart : undefined}
-                onTouchMove={isTop && drag.isDragging ? handleDrag : undefined}
-                onTouchEnd={isTop ? handleDragEnd : undefined}
-              >
-                <Card
-                  firstName={item.firstName}
-                  lastName={item.lastName}
-                  name={`${item.firstName} ${item.lastName}`}
-                  gender={item.gender}
-                  age={item.age}
-                  about={item.about}
-                  profilePic={item.profilePic}
-                  skills={item.skills}
-                />
-              </div>
-            );
-          })}
-      </div>
-      <div className="mt-6 text-gray-500">
-        {current + 1} / {feedData.length}
+    <div className="flex flex-col items-center justify-center w-full h-[100vh] mx-auto">
+      <div className="flex flex-col items-center justify-center w-3/4 mx-auto h-full">
+        <div className="relative w-80 h-[450px] flex items-center justify-center">
+          {feedData
+            .slice(current, current + 2)
+            .reverse()
+            .map((item, idx) => {
+              const isTop = idx === 0;
+              return (
+                <div
+                  key={item.id}
+                  ref={isTop ? cardRef : null}
+                  className={`absolute w-full h-full transition-transform duration-300 rounded-3xl ${
+                    isTop && drag.isDragging ? "z-20" : "z-10"
+                  } focus:outline-none shadow-xl flex items-center justify-center`}
+                  style={
+                    isTop
+                      ? {
+                          transform: `translate(${drag.x}px, ${
+                            drag.y
+                          }px) rotate(${drag.x / 15}deg)`,
+                          touchAction: "none",
+                          cursor: drag.isDragging ? "grabbing" : "grab",
+                          boxShadow:
+                            drag.x > 100
+                              ? "0 0 32px 4px #22c55e88"
+                              : drag.x < -100
+                              ? "0 0 32px 4px #ef444488"
+                              : "0 8px 32px rgba(0,0,0,0.18)",
+                          border:
+                            drag.x > 100
+                              ? "2px solid #22c55e"
+                              : drag.x < -100
+                              ? "2px solid #ef4444"
+                              : "2px solid #fff",
+                          transition: drag.isDragging
+                            ? "none"
+                            : "transform 0.3s cubic-bezier(.25,.8,.25,1), box-shadow 0.2s, border 0.2s",
+                        }
+                      : {
+                          transform: "scale(0.93) translateY(24px)",
+                          filter: "blur(1.5px)",
+                          zIndex: 0,
+                        }
+                  }
+                  onMouseDown={isTop ? handleDragStart : undefined}
+                  onMouseMove={
+                    isTop && drag.isDragging ? handleDrag : undefined
+                  }
+                  onMouseUp={isTop ? handleDragEnd : undefined}
+                  onMouseLeave={
+                    isTop && drag.isDragging ? handleDragEnd : undefined
+                  }
+                  onTouchStart={isTop ? handleDragStart : undefined}
+                  onTouchMove={
+                    isTop && drag.isDragging ? handleDrag : undefined
+                  }
+                  onTouchEnd={isTop ? handleDragEnd : undefined}
+                  tabIndex={isTop ? 0 : -1}
+                >
+                  <Card
+                    firstName={item.firstName}
+                    lastName={item.lastName}
+                    name={`${item.firstName} ${item.lastName}`}
+                    gender={item.gender}
+                    age={item.age}
+                    about={item.about}
+                    profilePic={item.profilePic}
+                    skills={item.skills}
+                  />
+                  {/* Swipe direction indicator */}
+                  {isTop && drag.x > 100 && (
+                    <div className="absolute top-10 left-6 text-green-500 text-4xl font-bold rotate-[-20deg] pointer-events-none select-none drop-shadow-lg">
+                      LIKE
+                    </div>
+                  )}
+                  {isTop && drag.x < -100 && (
+                    <div className="absolute top-10 right-6 text-red-500 text-4xl font-bold rotate-[20deg] pointer-events-none select-none drop-shadow-lg">
+                      NOPE
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div>
+        <div className="mt-8 text-gray-500 text-lg tracking-wide">
+          {current + 1} / {feedData.length}
+        </div>
       </div>
     </div>
   );
