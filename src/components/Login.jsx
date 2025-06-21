@@ -16,10 +16,8 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Only navigate if not already on /
-      if (window.location.pathname !== "/") {
-        navigate("/", { replace: true });
-      }
+      navigate("/", { replace: true });
+      return;
     }
   }, [isLoggedIn, navigate]);
 

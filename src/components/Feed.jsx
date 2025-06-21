@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import Card from "./card";
+import Card from "./Card";
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
