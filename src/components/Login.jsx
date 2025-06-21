@@ -1,9 +1,9 @@
-import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../appStore/userSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import { setUser } from "../appStore/userSlice";
 
 const Login = () => {
   const [email, setEmail] = React.useState("dilip@gmail.com");
@@ -11,13 +11,17 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-
+  console.log("user in login", user);
   const isLoggedIn = user.isLoggedIn;
+
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/");
+      // Only navigate if not already on /
+      if (window.location.pathname !== "/") {
+        navigate("/", { replace: true });
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,9 +31,8 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-      console.log(res.data.userData);
       dispatch(setUser(res.data.userData));
-      navigate("/");
+      // Navigation handled by useEffect
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -67,7 +70,7 @@ const Login = () => {
                   id="email"
                   autoComplete="email"
                   required
-                  className="block w-full rounded-md bg-gray-600 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-pink-600 placeholder:text-gray-700 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-gray-600 px-3 py-1.5 text-base  -outline-offset-1  placeholder:text-gray-700 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-600 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -98,7 +101,7 @@ const Login = () => {
                   id="password"
                   autoComplete="current-password"
                   required
-                  className="block w-full rounded-md bg-gray-700 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-pink-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-gray-700 px-3 py-1.5 text-base text-white   placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-600 sm:text-sm/6"
                 />
               </div>
             </div>
@@ -117,7 +120,8 @@ const Login = () => {
           <p className="mt-10 text-center text-sm/6 text-white">
             Not a member?
             <a
-              href="#"
+              href="signup"
+              onClick={() => navigate("/signup")}
               className="font-semibold underline text-pink-500 hover:text-pink-600"
             >
               Create a free account

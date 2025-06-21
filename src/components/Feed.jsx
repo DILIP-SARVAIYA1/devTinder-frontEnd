@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import Card from "./Card";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import Card from "./card";
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
@@ -22,6 +22,30 @@ const Feed = () => {
     };
     fetchFeed();
   }, []);
+
+  // Keyboard controls: left/right arrow for swipe
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (current >= feedData.length) return;
+      if (e.key === "ArrowLeft") {
+        // Dislike
+        setDrag({ x: -200, y: 0, isDragging: false });
+        setTimeout(() => {
+          setCurrent((prev) => Math.min(prev + 1, feedData.length));
+          setDrag({ x: 0, y: 0, isDragging: false });
+        }, 200);
+      } else if (e.key === "ArrowRight") {
+        // Like
+        setDrag({ x: 200, y: 0, isDragging: false });
+        setTimeout(() => {
+          setCurrent((prev) => Math.min(prev + 1, feedData.length));
+          setDrag({ x: 0, y: 0, isDragging: false });
+        }, 200);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [current, feedData.length]);
 
   // Handle drag events for swipe
   const handleDragStart = (e) => {
@@ -72,7 +96,7 @@ const Feed = () => {
     );
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-[100vh] mx-auto">
+    <div className="flex flex-col items-center justify-center bg-black w-full min-h-[100vh] mx-auto">
       <div className="flex flex-col items-center justify-center w-3/4 mx-auto h-full">
         <div className="relative w-80 h-[450px] flex items-center justify-center">
           {feedData
@@ -159,6 +183,21 @@ const Feed = () => {
         </div>
         <div className="mt-8 text-gray-500 text-lg tracking-wide">
           {current + 1} / {feedData.length}
+        </div>
+        {/* Keyboard input hint */}
+        <div className="mt-4 flex items-center gap-4">
+          <span className="flex items-center gap-1 text-gray-400 text-sm">
+            <kbd className="px-2 py-1 rounded bg-gray-200 border border-gray-300 shadow-inner">
+              ←
+            </kbd>
+            Dislike
+          </span>
+          <span className="flex items-center gap-1 text-gray-400 text-sm">
+            <kbd className="px-2 py-1 rounded bg-gray-200 border border-gray-300 shadow-inner">
+              →
+            </kbd>
+            Like
+          </span>
         </div>
       </div>
     </div>

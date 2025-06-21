@@ -7,15 +7,16 @@ const Card = ({
   age,
   gender,
   about,
+  imgSrc,
   profilePic,
   skills = [],
 }) => {
   return (
-    <div className="relative w-80 h-[450px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end transition-transform duration-300 hover:scale-105 select-none focus:outline-none">
+    <div className="relative w-80 h-[450px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end transition-transform duration-300 hover:scale-105 select-none">
       {/* Full background image behind all content */}
       <img
         className="absolute inset-0 w-full h-full object-cover z-0"
-        src={profilePic}
+        src={imgSrc || profilePic}
         alt={`${firstName || name}'s profile`}
         draggable={false}
       />
@@ -63,8 +64,6 @@ const Card = ({
           </button>
         </div>
       </div>
-      {/* Tinder-style gradient overlay */}
-      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none" />
     </div>
   );
 };
