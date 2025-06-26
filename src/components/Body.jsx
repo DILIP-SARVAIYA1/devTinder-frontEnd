@@ -5,7 +5,7 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../appStore/userSlice";
 import UserInfo from "./userInfo";
-import Feed from "./feed";
+import Feed from "./Feed";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Body = () => {
         const res = await axios.get(BASE_URL + "/profile/view", {
           withCredentials: true,
         });
-        dispatch(setUser(res.data));
+        dispatch(setUser(res.data.data));
       } catch (error) {
         console.error("User fetch failed:", error);
         // Only navigate if not already on /login
@@ -31,7 +31,7 @@ const Body = () => {
   }, [dispatch, navigate]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col md:flex-row items-start justify-center">
+    <div className="w-full bg-black min-h-screen flex flex-col md:flex-row items-start justify-center">
       <aside className="w-full md:w-1/4 flex-shrink-0 flex justify-center md:justify-end mb-8 md:mb-0">
         <UserInfo />
       </aside>

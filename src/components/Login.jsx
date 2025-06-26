@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -8,10 +8,10 @@ import { setUser } from "../appStore/userSlice";
 const Login = () => {
   const [email, setEmail] = React.useState("dilip@gmail.com");
   const [password, setPassword] = React.useState("Dilip@123");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  console.log("user in login", user);
   const isLoggedIn = user.isLoggedIn;
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       const res = await axios.post(
         BASE_URL + "/login",
@@ -32,12 +33,36 @@ const Login = () => {
       dispatch(setUser(res.data.userData));
       // Navigation handled by useEffect
     } catch (error) {
-      console.error("Login failed:", error);
+      let msg = "Login failed. Please try again.";
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        msg = error.response.data.message;
+      }
+      setError(msg);
     }
   };
 
   return (
     <div>
+      {/* Error Popup */}
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white border border-red-400 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center">
+            <span className="text-red-600 font-bold text-lg mb-2">Error</span>
+            <span className="text-gray-700 mb-4">{error}</span>
+            <button
+              onClick={() => setError("")}
+              className="px-4 py-1 rounded bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
+            >
+              Close
+            </button>
+          </div>
+          <div className="fixed inset-0 bg-black/30 z-[-1]" />
+        </div>
+      )}
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -119,7 +144,10 @@ const Login = () => {
             Not a member?
             <a
               href="signup"
-              onClick={() => navigate("/signup")}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/signup");
+              }}
               className="font-semibold underline text-pink-500 hover:text-pink-600"
             >
               Create a free account

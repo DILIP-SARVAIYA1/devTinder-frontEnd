@@ -4,22 +4,16 @@ import { logout } from "../appStore/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import { FiZap, FiGrid, FiBook, FiShield } from "react-icons/fi";
 
 const UserInfo = () => {
-  const user = useSelector((state) => state.user.userData);
+  const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      const res = await axios.get(BASE_URL + "/logout", {
-        withCredentials: true,
-      });
-      if (res.status === 200) {
-        console.log("Logout successful");
-      } else {
-        console.error("Logout failed with status:", res.status);
-      }
+      await axios.get(BASE_URL + "/logout", { withCredentials: true });
       dispatch(logout());
       navigate("/login");
     } catch (error) {
@@ -28,14 +22,11 @@ const UserInfo = () => {
   };
 
   return (
-    <aside className="w-full h-full min-h-screen bg-gradient-to-br from-gray-900 via-pink-900 to-pink-700 flex flex-col rounded-3xl shadow-xl overflow-hidden">
-      {/* Navbar */}
-      <div className="flex items-center justify-between px-6 py-4 bg-gray-900/80 border-b border-pink-800">
-        <div className="flex items-center gap-3 justify-center">
-          <span className="text-xl font-bold text-white tracking-wide">
-            devTinder
-          </span>
-          <div className="w-12 h-12 rounded-full border-1 border-pink-400 shadow-lg overflow-hidden mb-3">
+    <aside className="w-full h-full min-h-screen bg-[#18191c] flex flex-col shadow-xl overflow-hidden">
+      {/* Top Bar */}
+      <div className="flex items-center px-6 py-4 bg-gradient-to-r from-pink-500 via-orange-400 to-orange-500">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden">
             <img
               src={
                 user?.profilePic ||
@@ -45,53 +36,84 @@ const UserInfo = () => {
               className="w-full h-full object-cover"
             />
           </div>
+          <span className="text-white font-semibold text-lg">You</span>
         </div>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-pink-300 hover:text-white transition font-semibold"
-          title="Logout"
-        >
-          Logout
+        <div className="flex-1 flex justify-end gap-6">
+          <button
+            className="text-white hover:scale-110 transition"
+            title="Boost"
+          >
+            <FiZap size={28} />
+          </button>
+          <button
+            className="text-white hover:scale-110 transition"
+            title="Explore"
+          >
+            <FiGrid size={28} />
+          </button>
+          <button
+            className="text-white hover:scale-110 transition"
+            title="Stories"
+          >
+            <FiBook size={28} />
+          </button>
+          <button
+            className="text-white hover:scale-110 transition"
+            title="Safety"
+          >
+            <FiShield size={28} />
+          </button>
+        </div>
+      </div>
+      {/* Tabs */}
+      <div className="flex items-center gap-8 px-8 pt-6 bg-[#18191c]">
+        <button className="text-lg font-bold text-white border-b-2 border-orange-400 pb-1">
+          Messages
         </button>
       </div>
-      {/* User Info */}
-      <div className="flex flex-col items-center px-6 py-8 flex-1">
-        <div className="text-2xl font-bold text-white mb-1">
+
+      {/* User Info & Settings at bottom */}
+      <div className="px-8 pb-8 mt-auto">
+        <div className="text-white text-xl font-bold mb-1">
           {user?.firstName} {user?.lastName}
         </div>
-        <div className="text-pink-200 text-sm mb-2 capitalize">
+        <div className="text-orange-200 text-sm mb-2 capitalize">
           {user?.gender}{" "}
           {user?.age && <span className="ml-1">· {user.age}</span>}
         </div>
-        <div className="text-gray-200 text-center text-sm mb-4 opacity-80">
+        <div className="text-gray-300 text-sm mb-4 opacity-80">
           {user?.about}
         </div>
         {user?.skills && user.skills.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-center mb-4">
+          <div className="flex flex-wrap gap-2 mb-4">
             {user.skills.map((skill, idx) => (
               <span
                 key={idx}
-                className="bg-pink-200/80 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold shadow"
+                className="bg-orange-200/80 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold shadow"
               >
                 {skill}
               </span>
             ))}
           </div>
         )}
-        <div className="w-full border-t border-pink-800 my-4"></div>
-        {/* Settings */}
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex gap-2">
           <button
-            className="w-full py-2 rounded-xl bg-pink-600/80 text-white font-semibold hover:bg-pink-700 transition"
+            className="flex-1 py-2 rounded-xl bg-pink-600/90 text-white font-semibold hover:bg-pink-700 transition"
             onClick={() => navigate("/settings")}
           >
             Settings
           </button>
           <button
-            className="w-full py-2 rounded-xl bg-gray-800/80 text-white font-semibold hover:bg-gray-900 transition"
+            className="flex-1 py-2 rounded-xl bg-gray-800/90 text-white font-semibold hover:bg-gray-900 transition"
             onClick={() => navigate("/profile")}
           >
             Edit Profile
+          </button>
+          <button
+            className="flex-1 py-2 rounded-xl bg-orange-500/90 text-white font-semibold hover:bg-orange-600 transition"
+            onClick={handleLogout}
+          >
+            Logout
           </button>
         </div>
       </div>
