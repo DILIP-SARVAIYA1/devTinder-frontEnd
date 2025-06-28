@@ -24,7 +24,7 @@ const ProfileCard = forwardRef(
       profilePic,
       distance,
       onOpenProfile,
-      onButtonAction, // callback from Feed for animation after API success
+      onButtonAction,
       about,
       skills,
     },
@@ -53,7 +53,7 @@ const ProfileCard = forwardRef(
     }));
 
     return (
-      <div className="relative w-80 h-[500px] bg-black rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end select-none mx-auto">
+      <div className="relative w-80 h-[500px] bg-black rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end select-none mx-auto outline-none border-1 border-gray-800 transition-colors duration-200">
         {/* Full background image */}
         <img
           className="absolute inset-0 w-full h-full object-cover z-0"
