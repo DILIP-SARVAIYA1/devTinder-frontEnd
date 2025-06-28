@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import Card from "./Card";
+import ProfileCard from "./ProfileCard";
 
 const SWIPE_THRESHOLD = 120;
 const SWIPE_ANIMATION_DURATION = 500;
@@ -13,6 +13,7 @@ const Feed = () => {
   const [swipeDirection, setSwipeDirection] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [keyHeld, setKeyHeld] = useState(false);
+  const [loading, setLoading] = useState(true);
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -24,6 +25,8 @@ const Feed = () => {
         setFeedData(res.data.data);
       } catch (error) {
         console.error("Failed to fetch feed:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchFeed();
@@ -44,14 +47,19 @@ const Feed = () => {
     const handleKeyUp = (e) => {
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") setKeyHeld(false);
     };
+    const handleBlur = () => setKeyHeld(false);
+
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleBlur);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleBlur);
     };
   }, [current, feedData.length, isAnimating, keyHeld]);
 
+  // Only animate after API call success
   const handleButtonAction = (status) => {
     if (isAnimating || current >= feedData.length) return;
     setSwipeDirection(status === "interested" ? "right" : "left");
@@ -142,15 +150,15 @@ const Feed = () => {
       setIsAnimating(false);
     }
   };
-  console.log("Feed data length:", feedData.length);
 
-  // if (!feedData.length)
-  //   return (
-  //     <div className="flex flex-col items-center justify-center w-3/4 min-h-[500px] h-[500px] mx-auto">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mb-4"></div>
-  //       <div className="text-lg text-gray-500">Loading profiles...</div>
-  //     </div>
-  //   );
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center w-3/4 min-h-[500px] h-[500px] mx-auto">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mb-4"></div>
+        <div className="text-lg text-gray-500">Loading profiles...</div>
+      </div>
+    );
+  }
 
   if (current >= feedData.length)
     return (
@@ -234,7 +242,7 @@ const Feed = () => {
                 onTouchEnd={isTop && !isAnimating ? handleDragEnd : undefined}
                 tabIndex={isTop ? 0 : -1}
               >
-                <Card
+                <ProfileCard
                   ref={cardRef}
                   _id={item._id}
                   firstName={item.firstName}
@@ -246,7 +254,7 @@ const Feed = () => {
                   profilePic={item.profilePic}
                   skills={item.skills}
                   distance={item.distance}
-                  onButtonAction={handleButtonAction} // <-- add this
+                  onButtonAction={handleButtonAction}
                 />
                 {/* Swipe direction indicator */}
                 {isTop && drag.x > SWIPE_THRESHOLD && (

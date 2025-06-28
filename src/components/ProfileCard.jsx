@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 
-const Card = forwardRef(
+const ProfileCard = forwardRef(
   (
     {
       _id,
@@ -24,7 +24,9 @@ const Card = forwardRef(
       profilePic,
       distance,
       onOpenProfile,
-      onButtonAction, // <-- add this prop
+      onButtonAction, // callback from Feed for animation after API success
+      about,
+      skills,
     },
     ref
   ) => {
@@ -40,11 +42,12 @@ const Card = forwardRef(
         // After API success, trigger swipe animation in Feed
         if (onButtonAction) onButtonAction(status);
       } catch (err) {
+        // Optionally show error feedback
         console.error("Connection request failed:", err);
       }
     };
 
-    // Expose the API handler to parent via ref
+    // Expose the API handler to parent via ref (for swipe)
     useImperativeHandle(ref, () => ({
       handleConnectionRequest,
     }));
@@ -73,14 +76,35 @@ const Card = forwardRef(
                 </span>
               )}
             </h2>
-            <button
-              className="ml-auto bg-black/60 rounded-full p-1.5 text-white hover:bg-black/80 transition"
-              title="Open Profile"
-              onClick={onOpenProfile}
-            >
-              <FaArrowUp size={18} />
-            </button>
+            {onOpenProfile && (
+              <button
+                className="ml-auto bg-black/60 rounded-full p-1.5 text-white hover:bg-black/80 transition"
+                title="Open Profile"
+                onClick={onOpenProfile}
+              >
+                <FaArrowUp size={18} />
+              </button>
+            )}
           </div>
+          {/* About */}
+          {about && (
+            <div className="mt-2 text-gray-300 text-sm line-clamp-2">
+              {about}
+            </div>
+          )}
+          {/* Skills */}
+          {skills && Array.isArray(skills) && skills.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {skills.map((skill, idx) => (
+                <span
+                  key={idx}
+                  className="bg-pink-600/20 text-pink-400 text-xs px-2 py-1 rounded-full"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
           {/* Distance */}
           {distance && (
             <div className="flex items-center gap-2 text-gray-200 text-sm mt-1">
@@ -93,6 +117,7 @@ const Card = forwardRef(
             <button
               className="bg-gray-900 border-2 border-yellow-400 hover:bg-yellow-500/80 text-yellow-400 hover:text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow transition duration-200 active:scale-90"
               aria-label="Rewind"
+              // Optionally: add rewind logic
             >
               <FaUndo />
             </button>
@@ -106,6 +131,7 @@ const Card = forwardRef(
             <button
               className="bg-gray-900 border-2 border-blue-500 hover:bg-blue-500 hover:text-white text-blue-500 rounded-full w-12 h-12 flex items-center justify-center text-xl shadow transition duration-200 active:scale-90"
               aria-label="Super Like"
+              // Optionally: add super like logic
             >
               <FaStar />
             </button>
@@ -119,6 +145,7 @@ const Card = forwardRef(
             <button
               className="bg-gray-900 border-2 border-blue-400 hover:bg-blue-400 hover:text-white text-blue-400 rounded-full w-12 h-12 flex items-center justify-center text-xl shadow transition duration-200 active:scale-90"
               aria-label="Send"
+              // Optionally: add send logic
             >
               <FaTelegramPlane />
             </button>
@@ -129,4 +156,4 @@ const Card = forwardRef(
   }
 );
 
-export default Card;
+export default ProfileCard;
