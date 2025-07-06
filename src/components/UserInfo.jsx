@@ -4,7 +4,10 @@ import { logout } from "../appStore/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { FiZap, FiGrid, FiBook, FiShield } from "react-icons/fi";
+import { FiZap, FiGrid, FiBook, FiShield, FiHeart } from "react-icons/fi";
+import UserSentLikes from "./UserSentLikes";
+import UsersConnections from "./UsersConnections";
+import ReceivedReq from "./ReceivedReq";
 
 const UserInfo = () => {
   const user = useSelector((state) => state.user.user);
@@ -41,9 +44,9 @@ const UserInfo = () => {
         <div className="flex-1 flex justify-end gap-6">
           <button
             className="text-white hover:scale-110 transition"
-            title="Boost"
+            title="Likes"
           >
-            <FiZap size={28} />
+            <FiHeart size={28} />
           </button>
           <button
             className="text-white hover:scale-110 transition"
@@ -66,10 +69,21 @@ const UserInfo = () => {
         </div>
       </div>
       {/* Tabs */}
-      <div className="flex items-center gap-8 px-8 pt-6 bg-[#18191c]">
-        <button className="text-lg font-bold text-white border-b-2 border-orange-400 pb-1">
+      <div className="flex items-center justify-center gap-2 px-2 pt-6 bg-[#18191c]">
+        <button className="block text-lg font-bold text-white border-b-2 border-orange-400 pb-1">
           Messages
         </button>
+        <button className="block text-lg font-bold text-white border-b-2 border-transparent pb-1">
+          My Connections
+        </button>
+        <button className="block text-lg font-bold text-white border-b-2 border-transparent pb-1">
+          Friend Request
+        </button>
+      </div>
+      <div>
+        {/* <UserSentLikes /> */}
+        <UsersConnections />
+        <ReceivedReq />
       </div>
 
       {/* User Info & Settings at bottom */}
