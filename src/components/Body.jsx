@@ -32,10 +32,10 @@ const Body = () => {
 
   return (
     <div className="w-full bg-black min-h-screen flex flex-col md:flex-row items-start justify-center">
-      <aside className="w-full md:w-1/4 flex-shrink-0 flex justify-center md:justify-end mb-8 md:mb-0">
+      <aside className="w-full md:w-1/4 flex-shrink-0 flex justify-center md:justify-end mb-8 md:mb-0 h-screen overflow-y-auto">
         <UserInfo />
       </aside>
-      <main className="flex-1 flex justify-center items-start">
+      <main className="flex-1 flex justify-center items-start h-screen overflow-y-auto">
         <Feed />
       </main>
     </div>

@@ -25,7 +25,7 @@ const UserInfo = () => {
   };
 
   return (
-    <aside className="w-full h-full min-h-screen bg-[#18191c] flex flex-col shadow-xl overflow-hidden">
+    <aside className="w-full h-full min-h-screen bg-[#18191c] flex flex-col shadow-xl overflow-y-scroll">
       {/* Top Bar */}
       <div className="flex items-center px-6 py-4 bg-gradient-to-r from-pink-500 via-orange-400 to-orange-500">
         <div className="flex items-center gap-2">
@@ -81,9 +81,9 @@ const UserInfo = () => {
         </button>
       </div>
       <div>
-        {/* <UserSentLikes /> */}
-        <UsersConnections />
         <ReceivedReq />
+        <UsersConnections />
+        <UserSentLikes />
       </div>
 
       {/* User Info & Settings at bottom */}
