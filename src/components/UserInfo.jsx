@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react"; // Import useState for managing active tab
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../appStore/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { FiZap, FiGrid, FiBook, FiShield, FiHeart } from "react-icons/fi";
+import { FiGrid, FiBook, FiShield, FiHeart } from "react-icons/fi";
 import UserSentLikes from "./UserSentLikes";
 import UsersConnections from "./UsersConnections";
 import ReceivedReq from "./ReceivedReq";
@@ -14,6 +14,9 @@ const UserInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // State to manage which tab is active
+  const [activeTab, setActiveTab] = useState("messages"); // 'messages', 'connections', 'requests'
+
   const handleLogout = async () => {
     try {
       await axios.get(BASE_URL + "/logout", { withCredentials: true });
@@ -21,83 +24,115 @@ const UserInfo = () => {
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+      // Optionally, display an error message to the user
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "messages":
+        return <UserSentLikes />; // Assuming UserSentLikes is relevant for 'messages' or sent likes
+      case "connections":
+        return <UsersConnections />;
+      case "requests":
+        return <ReceivedReq />;
+      default:
+        return <UserSentLikes />; // Default to messages or sent likes
     }
   };
 
   return (
-    <aside className="w-full h-full min-h-screen bg-[#18191c] flex flex-col shadow-xl overflow-y-scroll">
-      {/* Top Bar */}
-      <div className="flex items-center px-6 py-4 bg-gradient-to-r from-pink-500 via-orange-400 to-orange-500">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden">
-            <img
-              src={
-                user?.profilePic ||
-                "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              }
-              alt="User avatar"
-              className="w-full h-full object-cover"
-            />
+    <aside className="w-full h-full min-h-screen bg-[#18191c] flex flex-col shadow-xl">
+      <div className="sticky top-0 z-20 bg-[#18191c] border-b border-gray-800">
+        {/* Top Bar: User Info & Quick Actions */}
+        <div className="flex items-center px-6 py-4 bg-gradient-to-r from-pink-500 via-orange-400 to-orange-500">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full border-2 border-white overflow-hidden">
+              <img
+                src={
+                  user?.profilePic ||
+                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                }
+                alt="User avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <span className="text-white font-semibold text-lg">You</span>
           </div>
-          <span className="text-white font-semibold text-lg">You</span>
+          <div className="flex-1 flex justify-end gap-6">
+            <button
+              className="text-white hover:scale-110 transition"
+              title="Likes"
+              onClick={() => setActiveTab("messages")} // Example: clicking Likes icon could show sent likes
+            >
+              <FiHeart size={28} />
+            </button>
+            <button
+              className="text-white hover:scale-110 transition"
+              title="Explore"
+              // Add actual navigation or action for explore
+            >
+              <FiGrid size={28} />
+            </button>
+            <button
+              className="text-white hover:scale-110 transition"
+              title="Stories"
+              // Add actual navigation or action for stories
+            >
+              <FiBook size={28} />
+            </button>
+            <button
+              className="text-white hover:scale-110 transition"
+              title="Safety"
+              // Add actual navigation or action for safety
+            >
+              <FiShield size={28} />
+            </button>
+          </div>
         </div>
-        <div className="flex-1 flex justify-end gap-6">
+
+        {/* Tabs for Navigation */}
+        <div className="flex items-center justify-between text-md gap-2 px-2 py-2">
           <button
-            className="text-white hover:scale-110 transition"
-            title="Likes"
+            className={`block text-md font-bold text-white pb-1 ${
+              activeTab === "messages"
+                ? "border-b-2 border-orange-400"
+                : "border-b-2 border-transparent"
+            }`}
+            onClick={() => setActiveTab("messages")}
           >
-            <FiHeart size={28} />
+            Messages
           </button>
           <button
-            className="text-white hover:scale-110 transition"
-            title="Explore"
+            className={`block font-bold text-white pb-1 ${
+              activeTab === "connections"
+                ? "border-b-2 border-orange-400"
+                : "border-b-2 border-transparent"
+            }`}
+            onClick={() => setActiveTab("connections")}
           >
-            <FiGrid size={28} />
+            My Connections
           </button>
           <button
-            className="text-white hover:scale-110 transition"
-            title="Stories"
+            className={`block font-bold text-white pb-1 ${
+              activeTab === "requests"
+                ? "border-b-2 border-orange-400"
+                : "border-b-2 border-transparent"
+            }`}
+            onClick={() => setActiveTab("requests")}
           >
-            <FiBook size={28} />
-          </button>
-          <button
-            className="text-white hover:scale-110 transition"
-            title="Safety"
-          >
-            <FiShield size={28} />
+            Friend Requests
           </button>
         </div>
-      </div>
-      {/* Tabs */}
-      <div className="flex items-center justify-center gap-2 px-2 pt-6 bg-[#18191c]">
-        <button className="block text-lg font-bold text-white border-b-2 border-orange-400 pb-1">
-          Messages
-        </button>
-        <button className="block text-lg font-bold text-white border-b-2 border-transparent pb-1">
-          My Connections
-        </button>
-        <button className="block text-lg font-bold text-white border-b-2 border-transparent pb-1">
-          Friend Request
-        </button>
-      </div>
-      <div>
-        <ReceivedReq />
-        <UsersConnections />
-        <UserSentLikes />
       </div>
 
-      {/* User Info & Settings at bottom */}
+      {/* Dynamic Content Area based on Active Tab */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {renderContent()}
+      </div>
+
+      {/* User Skills and Actions at Bottom */}
       <div className="px-8 pb-8 mt-auto">
-        <div className="text-white text-xl font-bold mb-1">
-          {user?.firstName} {user?.lastName}
-        </div>
-        <div className="text-orange-200 text-sm mb-2 capitalize">
-          {user?.gender}{" "}
-          {user?.age && <span className="ml-1">· {user.age}</span>}
-        </div>
-        <div className="text-gray-300 text-sm mb-4 opacity-80">
-          {user?.about}
-        </div>
         {user?.skills && user.skills.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {user.skills.map((skill, idx) => (

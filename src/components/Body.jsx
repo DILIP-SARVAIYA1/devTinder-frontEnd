@@ -31,7 +31,7 @@ const Body = () => {
   }, [dispatch, navigate]);
 
   return (
-    <div className="w-full bg-black min-h-screen flex flex-col md:flex-row items-start justify-center">
+    <div className="w-full bg-black text-white min-h-screen flex flex-col md:flex-row items-start justify-center">
       <aside className="w-full md:w-1/4 flex-shrink-0 flex justify-center md:justify-end mb-8 md:mb-0 h-screen overflow-y-auto">
         <UserInfo />
       </aside>
