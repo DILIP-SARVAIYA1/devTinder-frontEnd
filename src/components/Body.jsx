@@ -4,8 +4,8 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { setUser } from "../appStore/userSlice";
-import UserInfo from "./userInfo";
 import Feed from "./Feed";
+import UserInfo from "./userInfo";
 
 const Body = () => {
   const dispatch = useDispatch();
