@@ -31,7 +31,11 @@ const userSentLikesSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    updateUser(state, action) {
+      state.user = { ...state.user, ...action.payload };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserSentLikes.pending, (state) => {
@@ -49,5 +53,7 @@ const userSentLikesSlice = createSlice({
       });
   },
 });
+
+export const { updateUser } = userSentLikesSlice.actions;
 
 export default userSentLikesSlice.reducer;

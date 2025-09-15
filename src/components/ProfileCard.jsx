@@ -1,4 +1,9 @@
-import React, { forwardRef, useImperativeHandle, useCallback } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   FaUndo,
   FaTimes,
@@ -35,16 +40,17 @@ const ProfileCard = forwardRef(
     },
     ref
   ) => {
-    // Determine the image source, prioritizing imgSrc then profilePic, then a default placeholder
-    const displayImage = imgSrc || profilePic || DEFAULT_PROFILE_PIC;
+    // Memoize image and name to avoid unnecessary recalculations
+    const displayImage = useMemo(
+      () => imgSrc || profilePic || DEFAULT_PROFILE_PIC,
+      [imgSrc, profilePic]
+    );
+    const displayName = useMemo(() => {
+      if (firstName && lastName) return `${firstName} ${lastName}`;
+      return firstName || lastName || name || "Unknown User";
+    }, [firstName, lastName, name]);
 
-    // Combine first and last name for display, or use the 'name' prop if provided
-    const displayName =
-      firstName && lastName
-        ? `${firstName} ${lastName}`
-        : firstName || lastName || name || "Unknown User";
-
-    // Handle connection request (interested or ignored)
+    // Handle connection request (like/ignore)
     const handleConnectionRequest = useCallback(
       async (status) => {
         // Prevent action if card is not active or no ID is present
@@ -77,6 +83,13 @@ const ProfileCard = forwardRef(
       handleConnectionRequest,
     }));
 
+    // Keyboard accessibility: allow Enter/Space to trigger Like/Nope
+    const handleKeyDown = (e) => {
+      if (!isActive) return;
+      if (e.key === "ArrowLeft") handleConnectionRequest("ignored");
+      if (e.key === "ArrowRight") handleConnectionRequest("interested");
+    };
+
     return (
       <div
         className={`relative w-80 h-[500px] bg-gray-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col justify-end select-none mx-auto outline-none transition-all duration-300 ease-in-out
@@ -88,6 +101,10 @@ const ProfileCard = forwardRef(
         `}
         // Add aria-hidden when not active for accessibility
         aria-hidden={!isActive}
+        tabIndex={isActive ? 0 : -1}
+        role="region"
+        aria-label={`Profile card for ${displayName}`}
+        onKeyDown={handleKeyDown}
       >
         {/* Full background image */}
         <img
@@ -129,6 +146,7 @@ const ProfileCard = forwardRef(
                 onClick={onOpenProfile}
                 disabled={!isActive} // Disable button if card is not active
                 aria-label={`Open full profile for ${displayName}`}
+                tabIndex={isActive ? 0 : -1}
               >
                 <FaArrowUp size={18} />
               </button>
@@ -172,7 +190,8 @@ const ProfileCard = forwardRef(
               `}
               aria-label="Rewind"
               disabled={!isActive}
-              // onClick={() => console.log("Rewind clicked")} // Add actual rewind logic here
+              title="Rewind"
+              tabIndex={isActive ? 0 : -1}
             >
               <FaUndo />
             </button>
@@ -185,6 +204,8 @@ const ProfileCard = forwardRef(
               aria-label="Nope"
               onClick={() => handleConnectionRequest("ignored")}
               disabled={!isActive}
+              title="Nope"
+              tabIndex={isActive ? 0 : -1}
             >
               <FaTimes />
             </button>
@@ -196,7 +217,8 @@ const ProfileCard = forwardRef(
               `}
               aria-label="Super Like"
               disabled={!isActive}
-              // onClick={() => console.log("Super Like clicked")} // Add actual super like logic here
+              title="Super Like"
+              tabIndex={isActive ? 0 : -1}
             >
               <FaStar />
             </button>
@@ -209,6 +231,8 @@ const ProfileCard = forwardRef(
               aria-label="Like"
               onClick={() => handleConnectionRequest("interested")}
               disabled={!isActive}
+              title="Like"
+              tabIndex={isActive ? 0 : -1}
             >
               <FaHeart />
             </button>
@@ -220,7 +244,8 @@ const ProfileCard = forwardRef(
               `}
               aria-label="Send Message"
               disabled={!isActive}
-              // onClick={() => console.log("Send message clicked")} // Add actual send logic here
+              title="Send Message"
+              tabIndex={isActive ? 0 : -1}
             >
               <FaTelegramPlane />
             </button>
